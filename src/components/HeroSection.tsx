@@ -180,7 +180,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onRegisterClick, onExp
                 {/* Visual Overlay Badges */}
                 <div className="absolute top-3 left-3 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-white flex items-center gap-1.5">
                   <Award className="w-4 h-4 text-amber-400" />
-                  {heroTab === 'dormitory' ? '기숙사 특화 타입 (A-1 · C-1)' : '제이원플렉스 외관 조감도 (예정)'}
+                  {heroTab === 'dormitory' ? '기숙사 특화 타입 (A-1 · C-1)' : '제이원플렉스 외관 조감도'}
                 </div>
 
                 <div className="absolute bottom-3 left-3 right-3 bg-slate-950/85 backdrop-blur-md p-3 rounded-xl border border-slate-800 text-xs text-slate-300">
