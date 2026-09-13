@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MapPin, Train, Navigation, Truck, Building2, CheckCircle2, Clock, Footprints, ZoomIn, Maximize2, X, Sparkles, Upload, Image as ImageIcon } from 'lucide-react';
 import { LOCATION_POINTS, PROJECT_INFO } from '../data/projectData';
-const stationRouteImg = '/images/station_route_map_1789266592273.jpg';
+const stationRouteImg = '/images/station_route_map_1789266592273.webp';
 
 const STORAGE_KEY_STATION_IMAGE = 'joneflex_station_route_custom_image';
 

@@ -11,11 +11,13 @@ AI Studio에서 만든 이 프로젝트(Vite + React 19 + Tailwind 4)를 Vercel�
 | --- | --- |
 | `vercel.json` | 프레임워크(vite), 빌드 명령, 출력 폴더(`dist`), SPA 라우팅, 이미지 캐시 헤더 |
 | 이미지 경로 | `/src/assets/images/...` → `/images/...` (`public/images/`로 이동) |
+| 이미지 최적화 | 전부 WebP 변환 + 최대 가로 1920px로 리사이즈 (25.7MB → 1.3MB) |
 
 > **중요**: AI Studio 미리보기에서는 `/src/assets/...` 경로가 열리지만, `vite build` 결과물에는
 > `src/` 폴더가 포함되지 않습니다. 그대로 배포하면 배포된 사이트에서 이미지가 전부 깨집니다.
 > 그래서 실제로 사용 중인 이미지를 `public/images/`로 옮기고 경로를 수정했습니다.
 > 앞으로 AI Studio에서 이미지를 추가하면 `public/images/`에 넣고 `/images/파일명`으로 참조하세요.
+> 용량이 큰 사진은 WebP로 변환해서 넣는 것을 권장합니다.
 
 ---
 
@@ -96,11 +98,11 @@ vercel --prod   # 프로덕션 배포
 
 ---
 
-## 4. 알려진 개선 사항
+## 4. 참고 / 남은 정리거리
 
-- `public/images/regenerated_image_1789120455292.png` 가 약 14MB입니다.
-  모바일 로딩이 매우 느려지므로 WebP 변환 또는 리사이즈를 권장합니다.
-- `src/assets/images/` 에 현재 사용하지 않는 이미지 16장(약 50MB)이 남아 있습니다.
+- **이미지는 이미 최적화되어 있습니다.** 원본 4032x2268 사진과 14MB PNG를 WebP(최대 1920px)로
+  변환해서 빌드 결과물이 약 26MB → 1.9MB가 되었습니다. 화질 저하는 육안으로 확인되지 않습니다.
+- `src/assets/images/` 에 현재 사용하지 않는 원본 이미지 16장(약 40MB)이 남아 있습니다.
   빌드 결과물에는 포함되지 않지만, 저장소 용량을 줄이려면 정리해도 됩니다.
 - `package.json`의 `express`, `@google/genai`, `jpeg-js` 는 실제로 사용되지 않습니다.
   (AI Studio 기본 템플릿 잔재 — 제거해도 빌드에 영향 없습니다.)
