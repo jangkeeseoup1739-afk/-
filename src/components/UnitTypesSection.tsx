@@ -33,6 +33,20 @@ interface UnitTypesSectionProps {
 const STORAGE_KEY_UNIT_PLANS = 'joneflex_unit_type_plans_v2';
 const STORAGE_KEY_FLOOR_PLANS = 'joneflex_floor_plans_1_to_10_v2';
 
+/**
+ * 분양 자료로 받은 타입별 평면도. 모든 방문객에게 보입니다.
+ * A와 A-1, C와 C-1 은 같은 자료 한 장에 함께 실려 있어 같은 파일을 씁니다.
+ */
+const DEFAULT_UNIT_PLANS: Record<string, string> = {
+  'type-a': '/images/plans/plan-a.webp',
+  'type-a-1': '/images/plans/plan-a.webp',
+  'type-b': '/images/plans/plan-b.webp',
+  'type-c': '/images/plans/plan-c.webp',
+  'type-c-1': '/images/plans/plan-c.webp',
+  'type-d': '/images/plans/plan-d.webp',
+  'type-e': '/images/plans/plan-e.webp',
+};
+
 export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit }) => {
   // Main view tab: 'units' (A, B, C, D, E, A-1, C-1) vs 'floors' (1F ~ 10F)
   const [activeTab, setActiveTab] = useState<'units' | 'floors'>('units');
@@ -110,10 +124,14 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
     }, 3500);
   };
 
+  // 홈페이지에 기본으로 들어 있는 타입별 평면도.
+  // 사장님이 직접 첨부한 사진이 있으면 그쪽이 우선합니다.
+  const resolvedUnitPlans: Record<string, string> = { ...DEFAULT_UNIT_PLANS, ...unitPlans };
+
   // Helper getters based on current activeTab
   const currentTargetName = activeTab === 'units' ? selectedUnit.name : selectedFloor.name;
   const currentTargetId = activeTab === 'units' ? selectedUnit.id : selectedFloor.floorId;
-  const currentAttachedImage = activeTab === 'units' ? unitPlans[selectedUnit.id] : floorPlans[selectedFloor.floorId];
+  const currentAttachedImage = activeTab === 'units' ? resolvedUnitPlans[selectedUnit.id] : floorPlans[selectedFloor.floorId];
 
   // 사진을 줄여서 등록합니다.
   const handleFileProcess = async (file: File) => {
@@ -191,14 +209,24 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
 
   // Delete attached plan
   const handleDeletePlan = () => {
-    if (window.confirm(`${currentTargetName}의 등록된 평면도 사진을 삭제하시겠습니까?`)) {
+    // 타입별 평면도는 분양 자료가 기본으로 들어 있어, 삭제하면 그 자료로 되돌아갑니다.
+    const revertsToDefault = activeTab === 'units' && !!DEFAULT_UNIT_PLANS[selectedUnit.id];
+    const question = revertsToDefault
+      ? `${currentTargetName}에 첨부한 사진을 지우고 기본 분양 자료 평면도로 되돌리시겠습니까?`
+      : `${currentTargetName}의 등록된 평면도 사진을 삭제하시겠습니까?`;
+
+    if (window.confirm(question)) {
       if (activeTab === 'units') {
         setUnitPlans((prev) => {
           const next = { ...prev };
           delete next[selectedUnit.id];
           return next;
         });
-        showToast(`${selectedUnit.name} 평면도 사진이 삭제되었습니다.`);
+        showToast(
+          revertsToDefault
+            ? `${selectedUnit.name} 평면도가 기본 분양 자료로 되돌아갔습니다.`
+            : `${selectedUnit.name} 평면도 사진이 삭제되었습니다.`
+        );
       } else {
         setFloorPlans((prev) => {
           const next = { ...prev };
@@ -294,7 +322,7 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
               <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
                 activeTab === 'units' ? 'bg-amber-400 text-slate-950' : 'bg-slate-200 text-slate-700'
               }`}>
-                {Object.keys(unitPlans).length}/7개 첨부됨
+                {Object.keys(resolvedUnitPlans).length}/7개 첨부됨
               </span>
             </button>
 
@@ -362,14 +390,14 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
                     유닛 타입 선택 (총 7개)
                   </span>
                   <span className="text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
-                    {Object.keys(unitPlans).length}/7개 사진 등록
+                    {Object.keys(resolvedUnitPlans).length}/7개 사진 등록
                   </span>
                 </div>
 
                 <div className="space-y-2">
                   {filteredUnits.map((unit) => {
                     const isSelected = selectedUnit.id === unit.id;
-                    const hasPlan = !!unitPlans[unit.id];
+                    const hasPlan = !!resolvedUnitPlans[unit.id];
 
                     return (
                       <div
@@ -533,7 +561,7 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
                       <div>
                         <h4 className="text-sm sm:text-base font-black text-white flex items-center gap-2">
                           <span>{selectedUnit.name} 평면도</span>
-                          {unitPlans[selectedUnit.id] ? (
+                          {resolvedUnitPlans[selectedUnit.id] ? (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700">
                               평면도 사진 첨부됨
                             </span>
@@ -554,11 +582,11 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
                         title={`${selectedUnit.name} 평면도 사진 첨부 및 편집`}
                       >
                         <Upload className="w-3.5 h-3.5" />
-                        <span>{unitPlans[selectedUnit.id] ? '사진 편집 / 교체' : `${selectedUnit.name} 사진 첨부`}</span>
+                        <span>{resolvedUnitPlans[selectedUnit.id] ? '사진 편집 / 교체' : `${selectedUnit.name} 사진 첨부`}</span>
                       </button>
 
                       {/* Zoom Button */}
-                      {unitPlans[selectedUnit.id] && (
+                      {resolvedUnitPlans[selectedUnit.id] && (
                         <button
                           onClick={() => setIsZoomModalOpen(true)}
                           className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 p-2 rounded-xl transition-all cursor-pointer"
@@ -572,11 +600,11 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
 
                   {/* Main Display Canvas */}
                   <div className="p-4 sm:p-6">
-                    {unitPlans[selectedUnit.id] ? (
+                    {resolvedUnitPlans[selectedUnit.id] ? (
                       // Display Uploaded Unit Plan
                       <div className="relative group rounded-xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center min-h-[320px] max-h-[520px]">
                         <img
-                          src={unitPlans[selectedUnit.id]}
+                          src={resolvedUnitPlans[selectedUnit.id]}
                           alt={`${selectedUnit.name} 실제 평면도`}
                           referrerPolicy="no-referrer"
                           className="w-full h-full object-contain max-h-[500px] p-2 transition-transform duration-300 group-hover:scale-[1.01]"
@@ -666,7 +694,7 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
                       <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                       A타입, B, C, D, E, A-1, C-1 총 7개 타입의 평면도를 개별적으로 첨부하고 관리할 수 있습니다.
                     </span>
-                    {unitPlans[selectedUnit.id] && (
+                    {resolvedUnitPlans[selectedUnit.id] && (
                       <button
                         onClick={handleDeletePlan}
                         className="text-red-400 hover:text-red-300 font-bold flex items-center gap-1 cursor-pointer transition-colors"
