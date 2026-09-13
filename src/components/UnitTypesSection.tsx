@@ -242,10 +242,10 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
   // Category filters for Unit Types
   const unitCategories = [
     { id: 'all', label: '전체 타입 (A, B, C, D, E, A-1, C-1)' },
-    { id: 'office', label: '섹션오피스 (C, D)' },
+    { id: 'office', label: '기숙사 (C, D)' },
     { id: 'factory', label: '기숙사 (A, B)' },
     { id: 'dorm', label: '테라스 기숙사 (A-1, C-1)' },
-    { id: 'retail', label: '근린생활시설 상가 (E)' },
+    { id: 'retail', label: '기숙사 (E)' },
   ];
 
   const filteredUnits = UNIT_TYPES.filter((unit) => {
@@ -301,7 +301,7 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
             제이원플렉스 <span className="text-blue-900">공급안내 평면도 갤러리</span>
           </h2>
           <p className="mt-3 text-slate-600 text-sm sm:text-base leading-relaxed">
-            <strong>오피스/지산/상가/기숙사 타입별 평면도(A, B, C, D, E, A-1, C-1)</strong> 및 
+            <strong>기숙사 타입별 평면도(A, B, C, D, E, A-1, C-1)</strong> 및
             <strong>지상 1층부터 10층까지의 층별 평면도</strong>를 직접 첨부하고 언제든 편집하실 수 있습니다.
           </p>
         </div>

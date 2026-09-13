@@ -111,7 +111,7 @@ export const UNIT_TYPES: UnitType[] = [
   {
     id: 'type-a',
     name: 'A 타입',
-    category: '지식산업센터(제조)',
+    category: '기숙사',
     exclusiveAreaPy: 28.5,
     exclusiveAreaM2: 94.21,
     contractAreaPy: 57.1,
@@ -129,7 +129,7 @@ export const UNIT_TYPES: UnitType[] = [
   {
     id: 'type-b',
     name: 'B 타입',
-    category: '지식산업센터(제조)',
+    category: '기숙사',
     exclusiveAreaPy: 34.8,
     exclusiveAreaM2: 115.04,
     contractAreaPy: 69.8,
@@ -147,7 +147,7 @@ export const UNIT_TYPES: UnitType[] = [
   {
     id: 'type-c',
     name: 'C 타입',
-    category: '섹션오피스',
+    category: '기숙사',
     exclusiveAreaPy: 14.2,
     exclusiveAreaM2: 46.94,
     contractAreaPy: 28.6,
@@ -165,7 +165,7 @@ export const UNIT_TYPES: UnitType[] = [
   {
     id: 'type-d',
     name: 'D 타입',
-    category: '섹션오피스',
+    category: '기숙사',
     exclusiveAreaPy: 21.6,
     exclusiveAreaM2: 71.40,
     contractAreaPy: 43.4,
@@ -182,7 +182,7 @@ export const UNIT_TYPES: UnitType[] = [
   {
     id: 'type-e',
     name: 'E 타입',
-    category: '근린생활시설',
+    category: '기숙사',
     exclusiveAreaPy: 16.4,
     exclusiveAreaM2: 54.21,
     contractAreaPy: 33.1,
