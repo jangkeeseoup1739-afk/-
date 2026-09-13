@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import { MapPin, Train, Navigation, Truck, Building2, CheckCircle2, Clock, Footprints, ZoomIn, Maximize2, X, Sparkles, Upload, Image as ImageIcon } from 'lucide-react';
 import { LOCATION_POINTS, PROJECT_INFO } from '../data/projectData';
 import { compressImageFile, trySaveToStorage } from '../lib/imageStore';
+import { isAdminMode } from '../lib/adminMode';
 
 const stationRouteImg = '/images/station_route_map_1789266592273.webp';
 
 const STORAGE_KEY_STATION_IMAGE = 'joneflex_station_route_custom_image';
 
 export const LocationSection: React.FC = () => {
+  // 약도 교체는 운영자만 봅니다. 주소 뒤에 ?admin=1 을 붙여 켭니다.
+  const adminMode = isAdminMode();
+
   const [stationImage, setStationImage] = useState<string>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_STATION_IMAGE);
@@ -98,20 +102,22 @@ export const LocationSection: React.FC = () => {
                     <span>확대보기</span>
                   </button>
 
-                  <label className="bg-blue-600/90 hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold border border-blue-500 shadow-md flex items-center gap-1.5 cursor-pointer">
-                    <Upload className="w-3.5 h-3.5 text-white" />
-                    <span>사진 교체</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          handleImageChange(e.target.files[0]);
-                        }
-                      }}
-                    />
-                  </label>
+                  {adminMode && (
+                    <label className="bg-blue-600/90 hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold border border-blue-500 shadow-md flex items-center gap-1.5 cursor-pointer">
+                      <Upload className="w-3.5 h-3.5 text-white" />
+                      <span>사진 교체</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            handleImageChange(e.target.files[0]);
+                          }
+                        }}
+                      />
+                    </label>
+                  )}
                 </div>
 
                 <div className="p-2.5 bg-slate-950/90 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-300">

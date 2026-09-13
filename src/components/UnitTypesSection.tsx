@@ -25,6 +25,7 @@ import {
 import { FLOOR_PLANS_1_TO_10, UNIT_TYPES } from '../data/projectData';
 import { FloorPlanItem, UnitType } from '../types';
 import { compressImageFile, estimateBytes, formatSize, trySaveToStorage } from '../lib/imageStore';
+import { isAdminMode } from '../lib/adminMode';
 
 interface UnitTypesSectionProps {
   onSelectUnit: (unit: UnitType) => void;
@@ -48,6 +49,9 @@ const DEFAULT_UNIT_PLANS: Record<string, string> = {
 };
 
 export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit }) => {
+  // 편집 기능은 운영자만 봅니다. 주소 뒤에 ?admin=1 을 붙여 켭니다.
+  const adminMode = isAdminMode();
+
   // Main view tab: 'units' (A, B, C, D, E, A-1, C-1) vs 'floors' (1F ~ 10F)
   const [activeTab, setActiveTab] = useState<'units' | 'floors'>('units');
 
@@ -295,14 +299,14 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
         <div className="text-center max-w-3xl mx-auto mb-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-900 text-xs font-black mb-3">
             <LayoutGrid className="w-3.5 h-3.5 text-blue-800" />
-            공급안내 · 평면도 첨부 &amp; 편집 시스템
+            공급안내 · 타입별 · 층별 평면도
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
             제이원플렉스 <span className="text-blue-900">공급안내 평면도 갤러리</span>
           </h2>
           <p className="mt-3 text-slate-600 text-sm sm:text-base leading-relaxed">
             <strong>기숙사 타입별 평면도(A, B, C, D, E, A-1, C-1)</strong> 및
-            <strong>지상 1층부터 10층까지의 층별 평면도</strong>를 직접 첨부하고 언제든 편집하실 수 있습니다.
+            <strong>지상 1층부터 10층까지의 층별 평면도</strong>를 한눈에 확인하실 수 있습니다.
           </p>
         </div>
 
@@ -322,7 +326,7 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
               <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
                 activeTab === 'units' ? 'bg-amber-400 text-slate-950' : 'bg-slate-200 text-slate-700'
               }`}>
-                {Object.keys(resolvedUnitPlans).length}/7개 첨부됨
+                {adminMode ? `${Object.keys(resolvedUnitPlans).length}/7개 첨부됨` : '7개 타입'}
               </span>
             </button>
 
@@ -339,7 +343,7 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
               <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
                 activeTab === 'floors' ? 'bg-amber-400 text-slate-950' : 'bg-slate-200 text-slate-700'
               }`}>
-                {Object.keys(floorPlans).length}/10개 첨부됨
+                {adminMode ? `${Object.keys(floorPlans).length}/10개 첨부됨` : '1F ~ 10F'}
               </span>
             </button>
           </div>
@@ -561,29 +565,33 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
                       <div>
                         <h4 className="text-sm sm:text-base font-black text-white flex items-center gap-2">
                           <span>{selectedUnit.name} 평면도</span>
-                          {resolvedUnitPlans[selectedUnit.id] ? (
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700">
-                              평면도 사진 첨부됨
-                            </span>
-                          ) : (
-                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">
-                              사진 첨부 대기
-                            </span>
+                          {adminMode && (
+                            resolvedUnitPlans[selectedUnit.id] ? (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700">
+                                평면도 사진 첨부됨
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">
+                                사진 첨부 대기
+                              </span>
+                            )
                           )}
                         </h4>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      {/* Upload / Edit Button */}
-                      <button
-                        onClick={() => setIsEditModalOpen(true)}
-                        className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
-                        title={`${selectedUnit.name} 평면도 사진 첨부 및 편집`}
-                      >
-                        <Upload className="w-3.5 h-3.5" />
-                        <span>{resolvedUnitPlans[selectedUnit.id] ? '사진 편집 / 교체' : `${selectedUnit.name} 사진 첨부`}</span>
-                      </button>
+                      {/* Upload / Edit Button (운영자 전용) */}
+                      {adminMode && (
+                        <button
+                          onClick={() => setIsEditModalOpen(true)}
+                          className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+                          title={`${selectedUnit.name} 평면도 사진 첨부 및 편집`}
+                        >
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>{resolvedUnitPlans[selectedUnit.id] ? '사진 편집 / 교체' : `${selectedUnit.name} 사진 첨부`}</span>
+                        </button>
+                      )}
 
                       {/* Zoom Button */}
                       {resolvedUnitPlans[selectedUnit.id] && (
@@ -619,13 +627,15 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
                             <Maximize2 className="w-4 h-4 text-amber-400" />
                             <span>전체화면 확대 보기</span>
                           </button>
-                          <button
-                            onClick={() => setIsEditModalOpen(true)}
-                            className="bg-blue-600/95 hover:bg-blue-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold border border-blue-500 shadow-xl flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
-                          >
-                            <Upload className="w-4 h-4" />
-                            <span>다른 사진으로 교체</span>
-                          </button>
+                          {adminMode && (
+                            <button
+                              onClick={() => setIsEditModalOpen(true)}
+                              className="bg-blue-600/95 hover:bg-blue-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold border border-blue-500 shadow-xl flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
+                            >
+                              <Upload className="w-4 h-4" />
+                              <span>다른 사진으로 교체</span>
+                            </button>
+                          )}
                         </div>
 
                         {/* Bottom Tag */}
@@ -637,6 +647,12 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
                             클릭하여 확대
                           </span>
                         </div>
+                      </div>
+                    ) : !adminMode ? (
+                      <div className="rounded-2xl border border-slate-800 bg-slate-950/50 p-10 text-center flex flex-col items-center justify-center min-h-[320px]">
+                        <ImageIcon className="w-10 h-10 text-slate-600 mb-3" />
+                        <p className="text-sm text-slate-300 font-bold">{selectedUnit.name} 평면도는 준비 중입니다.</p>
+                        <p className="text-xs text-slate-500 mt-1.5">자세한 도면은 분양 상담으로 안내해 드립니다.</p>
                       </div>
                     ) : (
                       // Empty Dropzone State for Unit
@@ -688,22 +704,24 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
                     )}
                   </div>
 
-                  {/* Bottom Footer Info & Delete Action */}
-                  <div className="px-5 py-3 bg-slate-950 border-t border-slate-800 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
-                    <span className="flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                      A타입, B, C, D, E, A-1, C-1 총 7개 타입의 평면도를 개별적으로 첨부하고 관리할 수 있습니다.
-                    </span>
-                    {resolvedUnitPlans[selectedUnit.id] && (
-                      <button
-                        onClick={handleDeletePlan}
-                        className="text-red-400 hover:text-red-300 font-bold flex items-center gap-1 cursor-pointer transition-colors"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        <span>{selectedUnit.name} 사진 삭제</span>
-                      </button>
-                    )}
-                  </div>
+                  {/* Bottom Footer Info & Delete Action (운영자 전용) */}
+                  {adminMode && (
+                    <div className="px-5 py-3 bg-slate-950 border-t border-slate-800 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
+                      <span className="flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                        A타입, B, C, D, E, A-1, C-1 총 7개 타입의 평면도를 개별적으로 첨부하고 관리할 수 있습니다.
+                      </span>
+                      {resolvedUnitPlans[selectedUnit.id] && (
+                        <button
+                          onClick={handleDeletePlan}
+                          className="text-red-400 hover:text-red-300 font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>{selectedUnit.name} 사진 삭제</span>
+                        </button>
+                      )}
+                    </div>
+                  )}
 
                 </div>
 
@@ -772,7 +790,7 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
                     층 선택 (지상 1층 ~ 10층)
                   </span>
                   <span className="text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
-                    {Object.keys(floorPlans).length}/10개 첨부됨
+                    {adminMode ? `${Object.keys(floorPlans).length}/10개 첨부됨` : '1F ~ 10F'}
                   </span>
                 </div>
 
@@ -912,28 +930,32 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
                       <div>
                         <h4 className="text-sm sm:text-base font-black text-white flex items-center gap-2">
                           <span>{selectedFloor.name} 정밀 평면도</span>
-                          {floorPlans[selectedFloor.floorId] ? (
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700">
-                              평면도 사진 첨부됨
-                            </span>
-                          ) : (
-                            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">
-                              사진 첨부 대기
-                            </span>
+                          {adminMode && (
+                            floorPlans[selectedFloor.floorId] ? (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700">
+                                평면도 사진 첨부됨
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">
+                                사진 첨부 대기
+                              </span>
+                            )
                           )}
                         </h4>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => setIsEditModalOpen(true)}
-                        className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
-                        title={`${selectedFloor.name} 평면도 사진 첨부 및 편집`}
-                      >
-                        <Upload className="w-3.5 h-3.5" />
-                        <span>{floorPlans[selectedFloor.floorId] ? '사진 편집 / 교체' : `${selectedFloor.shortName} 사진 첨부`}</span>
-                      </button>
+                      {adminMode && (
+                        <button
+                          onClick={() => setIsEditModalOpen(true)}
+                          className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+                          title={`${selectedFloor.name} 평면도 사진 첨부 및 편집`}
+                        >
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>{floorPlans[selectedFloor.floorId] ? '사진 편집 / 교체' : `${selectedFloor.shortName} 사진 첨부`}</span>
+                        </button>
+                      )}
 
                       {floorPlans[selectedFloor.floorId] && (
                         <button
@@ -966,14 +988,22 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
                             <Maximize2 className="w-4 h-4 text-amber-400" />
                             <span>전체화면 확대 보기</span>
                           </button>
-                          <button
-                            onClick={() => setIsEditModalOpen(true)}
-                            className="bg-blue-600/95 hover:bg-blue-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold border border-blue-500 shadow-xl flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
-                          >
-                            <Upload className="w-4 h-4" />
-                            <span>다른 사진으로 교체</span>
-                          </button>
+                          {adminMode && (
+                            <button
+                              onClick={() => setIsEditModalOpen(true)}
+                              className="bg-blue-600/95 hover:bg-blue-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold border border-blue-500 shadow-xl flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
+                            >
+                              <Upload className="w-4 h-4" />
+                              <span>다른 사진으로 교체</span>
+                            </button>
+                          )}
                         </div>
+                      </div>
+                    ) : !adminMode ? (
+                      <div className="rounded-2xl border border-slate-800 bg-slate-950/50 p-10 text-center flex flex-col items-center justify-center min-h-[320px]">
+                        <ImageIcon className="w-10 h-10 text-slate-600 mb-3" />
+                        <p className="text-sm text-slate-300 font-bold">{selectedFloor.name} 평면도는 준비 중입니다.</p>
+                        <p className="text-xs text-slate-500 mt-1.5">자세한 도면은 분양 상담으로 안내해 드립니다.</p>
                       </div>
                     ) : (
                       <div
@@ -1024,22 +1054,24 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
                     )}
                   </div>
 
-                  {/* Bottom Footer Info & Delete Action */}
-                  <div className="px-5 py-3 bg-slate-950 border-t border-slate-800 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
-                    <span className="flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                      지상 1층부터 10층까지 원하는 층을 선택하여 각 층의 평면도를 독립적으로 등록 및 관리할 수 있습니다.
-                    </span>
-                    {floorPlans[selectedFloor.floorId] && (
-                      <button
-                        onClick={handleDeletePlan}
-                        className="text-red-400 hover:text-red-300 font-bold flex items-center gap-1 cursor-pointer transition-colors"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        <span>{selectedFloor.shortName} 사진 삭제</span>
-                      </button>
-                    )}
-                  </div>
+                  {/* Bottom Footer Info & Delete Action (운영자 전용) */}
+                  {adminMode && (
+                    <div className="px-5 py-3 bg-slate-950 border-t border-slate-800 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
+                      <span className="flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                        지상 1층부터 10층까지 원하는 층을 선택하여 각 층의 평면도를 독립적으로 등록 및 관리할 수 있습니다.
+                      </span>
+                      {floorPlans[selectedFloor.floorId] && (
+                        <button
+                          onClick={handleDeletePlan}
+                          className="text-red-400 hover:text-red-300 font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>{selectedFloor.shortName} 사진 삭제</span>
+                        </button>
+                      )}
+                    </div>
+                  )}
 
                 </div>
 
@@ -1069,7 +1101,7 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
       {/* ========================================================================= */}
       {/* SHARED EDIT / ATTACH MODAL */}
       {/* ========================================================================= */}
-      {isEditModalOpen && (
+      {adminMode && isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
           <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl text-white">
             
