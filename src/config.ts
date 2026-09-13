@@ -10,7 +10,8 @@
  *
  * 비워 두면 기존과 동일하게 고객 브라우저에만 저장되고 전송은 하지 않습니다.
  */
-const FALLBACK_LEAD_ENDPOINT = '';
+const FALLBACK_LEAD_ENDPOINT =
+  'https://script.google.com/macros/s/AKfycbxkOitPmTT96EcgbV3vk4H7NApg9thvLi0QAlm5cHybwuuRBU1ainD11S9bNyGNynWl/exec';
 
 // import.meta.env.VITE_* 는 빌드할 때 값으로 통째로 치환됩니다.
 // 중간에 ?. 같은 것을 끼우면 치환이 안 되므로 이 형태를 유지하세요.
