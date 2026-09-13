@@ -3,6 +3,7 @@ import { UserCheck, Phone, Send, CheckCircle2, ShieldCheck, AlertCircle, Sparkle
 import { PROJECT_INFO, UNIT_TYPES } from '../data/projectData';
 import { CustomerLead } from '../types';
 import { sendLead, LeadDeliveryStatus } from '../lib/sendLead';
+import { isAdminMode } from '../lib/adminMode';
 
 interface CustomerRegistrationSectionProps {
   prefilledType?: string;
@@ -15,6 +16,9 @@ export const CustomerRegistrationSection: React.FC<CustomerRegistrationSectionPr
   prefilledNote,
   onOpenLeadsModal,
 }) => {
+  // 접수 내역 보기는 운영자만. 주소 뒤에 ?admin=1 을 붙여 켭니다.
+  const adminMode = isAdminMode();
+
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [interestCategory, setInterestCategory] = useState('지식산업센터 (제조형 드라이브인)');
@@ -408,7 +412,7 @@ export const CustomerRegistrationSection: React.FC<CustomerRegistrationSectionPr
                   개인정보는 상담 목적 외에 이용되지 않습니다.
                 </span>
                 
-                {onOpenLeadsModal && (
+                {adminMode && onOpenLeadsModal && (
                   <button
                     type="button"
                     onClick={onOpenLeadsModal}
