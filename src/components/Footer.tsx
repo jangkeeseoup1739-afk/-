@@ -87,8 +87,15 @@ export const Footer: React.FC = () => {
               세제 감면 혜택(취득세, 재산세 등) 및 정책자금 대출 조건은 정부 정책 및 관련 법령, 개인 및 기업 신용도에 따라 달라질 수 있으므로 반드시 분양 상담사를 통해 최종 확인하시기 바랍니다.
             </span>
           </p>
-          <p className="pt-2 text-slate-600">
-            © 2026 주안국가산단역 제이원플렉스 지식산업센터 분양안내센터. All Rights Reserved.
+          <p className="pt-2 text-slate-600 flex flex-wrap items-center gap-x-3 gap-y-1">
+            <a
+              href="/privacy"
+              className="text-slate-300 font-bold hover:text-white underline underline-offset-2"
+            >
+              개인정보처리방침
+            </a>
+            <span className="text-slate-700">|</span>
+            <span>© 2026 주안국가산단역 제이원플렉스 지식산업센터 분양안내센터. All Rights Reserved.</span>
           </p>
         </div>
 
