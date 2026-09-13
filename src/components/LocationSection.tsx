@@ -55,7 +55,7 @@ export const LocationSection: React.FC = () => {
             주안국가산단역 2번 출구 <span className="text-blue-900">100m 초역세권</span>
           </h2>
           <p className="mt-3 text-slate-600 text-sm sm:text-base">
-            출퇴근 도보 약 5분(100m)의 압도적 역세권 프리미엄과 수도권 서부권을 관통하는 사통팔달 쾌속 물류 교통망
+            출퇴근 도보 약 2분(100m)의 압도적 역세권 프리미엄과 수도권 서부권을 관통하는 사통팔달 쾌속 물류 교통망
           </p>
         </div>
 
@@ -67,7 +67,7 @@ export const LocationSection: React.FC = () => {
             {/* Left Info & Station Walking Photo */}
             <div className="lg:col-span-5 space-y-4">
               <span className="inline-flex items-center gap-1 bg-amber-400 text-slate-950 font-black text-xs px-3 py-1 rounded-full shadow-sm">
-                <Footprints className="w-3.5 h-3.5" /> 도보 5분 거리 (100m)
+                <Footprints className="w-3.5 h-3.5" /> 도보 2분 거리 (100m)
               </span>
 
               <h3 className="text-2xl sm:text-3xl font-black leading-snug">
@@ -145,7 +145,7 @@ export const LocationSection: React.FC = () => {
                   <Footprints className="w-5 h-5 text-emerald-400" />
                   <div>
                     <span className="text-[10px] text-slate-400 block">거리 / 도보</span>
-                    <span className="text-xs font-bold text-white">100m (약 5분)</span>
+                    <span className="text-xs font-bold text-white">100m (약 2분)</span>
                   </div>
                 </div>
               </div>
@@ -171,7 +171,7 @@ export const LocationSection: React.FC = () => {
                     </div>
                     <div>
                       <h4 className="text-sm font-bold text-white">주안국가산단역 (2번 출구 100m)</h4>
-                      <p className="text-xs text-slate-400">도보 약 5분 초근접, 눈앞에 보이는 랜드마크</p>
+                      <p className="text-xs text-slate-400">도보 약 2분 초근접, 눈앞에 보이는 랜드마크</p>
                     </div>
                   </div>
                   <span className="text-xs font-black text-amber-400 bg-amber-950/60 border border-amber-800/60 px-2.5 py-1 rounded-md">
@@ -248,7 +248,7 @@ export const LocationSection: React.FC = () => {
                   <Train className="w-4 h-4" />
                 </div>
                 <h4 className="text-sm sm:text-base font-black text-white">
-                  주안국가산단역 2번 출구 이동 동선도 (도보 약 5분, 100m)
+                  주안국가산단역 2번 출구 이동 동선도 (도보 약 2분, 100m)
                 </h4>
               </div>
 
@@ -270,7 +270,7 @@ export const LocationSection: React.FC = () => {
             </div>
 
             <div className="p-3 bg-slate-900 border-t border-slate-800 text-center text-xs text-slate-400">
-              인천 2호선 주안국가산단역 2번 출구에서 제이원플렉스까지 도보 약 5분 (100m)
+              인천 2호선 주안국가산단역 2번 출구에서 제이원플렉스까지 도보 약 2분 (100m)
             </div>
 
           </div>

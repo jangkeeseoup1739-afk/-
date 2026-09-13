@@ -9,7 +9,7 @@ export const PROJECT_INFO = {
   location: '인천광역시 미추홀구 주안국가산업단지 내 (주안국가산단역 2번 출구 100m)',
   stationName: '인천 2호선 주안국가산단역',
   stationExit: '2번 출구',
-  stationDistance: '100m (도보 약 5분)',
+  stationDistance: '100m (도보 약 2분)',
   composition: '지식산업센터 + 근린생활시설(근생) + 기숙사',
   structure: '지하 2층 ~ 지상 10층',
   driveInFloors: '지하 2층 ~ 지상 4층 (도어 투 도어 드라이브인 시스템)',
@@ -421,7 +421,7 @@ export const FLOOR_PLANS_1_TO_10: FloorPlanItem[] = [
 export const LOCATION_POINTS = [
   {
     title: '주안국가산단역 2번 출구 100m',
-    highlight: '도보 5분 초역세권',
+    highlight: '도보 2분 초역세권',
     desc: '인천지하철 2호선 주안국가산단역 2번 출구에서 단 100미터! 출퇴근 및 비즈니스 미팅에 최적화된 절대 입지'
   },
   {
