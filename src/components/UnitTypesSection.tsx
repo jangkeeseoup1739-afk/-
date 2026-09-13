@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { FLOOR_PLANS_1_TO_10, UNIT_TYPES } from '../data/projectData';
 import { FloorPlanItem, UnitType } from '../types';
+import { compressImageFile, estimateBytes, formatSize, trySaveToStorage } from '../lib/imageStore';
 
 interface UnitTypesSectionProps {
   onSelectUnit: (unit: UnitType) => void;
@@ -75,20 +76,29 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
   const fileInputRef = useRef<HTMLInputElement>(null);
   const modalFileInputRef = useRef<HTMLInputElement>(null);
 
-  // Sync to LocalStorage
+  // Sync to LocalStorage.
+  // 첫 렌더에서는 방금 읽어온 값을 그대로 되쓰는 것이라 건너뜁니다.
+  // (저장이 아예 막힌 브라우저에서 방문 즉시 경고가 뜨는 것을 막기 위함)
+  const unitPlansFirstSync = useRef(true);
+  const floorPlansFirstSync = useRef(true);
+
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY_UNIT_PLANS, JSON.stringify(unitPlans));
-    } catch (e) {
-      console.warn('LocalStorage save error (unitPlans):', e);
+    if (unitPlansFirstSync.current) {
+      unitPlansFirstSync.current = false;
+      return;
+    }
+    if (!trySaveToStorage(STORAGE_KEY_UNIT_PLANS, JSON.stringify(unitPlans))) {
+      showToast('저장 공간이 부족해 사진이 저장되지 않았습니다. 등록된 평면도를 일부 삭제한 뒤 다시 시도해 주세요.');
     }
   }, [unitPlans]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY_FLOOR_PLANS, JSON.stringify(floorPlans));
-    } catch (e) {
-      console.warn('LocalStorage save error (floorPlans):', e);
+    if (floorPlansFirstSync.current) {
+      floorPlansFirstSync.current = false;
+      return;
+    }
+    if (!trySaveToStorage(STORAGE_KEY_FLOOR_PLANS, JSON.stringify(floorPlans))) {
+      showToast('저장 공간이 부족해 사진이 저장되지 않았습니다. 등록된 평면도를 일부 삭제한 뒤 다시 시도해 주세요.');
     }
   }, [floorPlans]);
 
@@ -105,34 +115,37 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
   const currentTargetId = activeTab === 'units' ? selectedUnit.id : selectedFloor.floorId;
   const currentAttachedImage = activeTab === 'units' ? unitPlans[selectedUnit.id] : floorPlans[selectedFloor.floorId];
 
-  // Process File to Base64
-  const handleFileProcess = (file: File) => {
+  // 사진을 줄여서 등록합니다.
+  const handleFileProcess = async (file: File) => {
     if (!file.type.startsWith('image/')) {
       alert('이미지 파일(JPG, PNG, WEBP 등)만 등록 가능합니다.');
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const result = event.target?.result as string;
-      if (result) {
-        if (activeTab === 'units') {
-          setUnitPlans((prev) => ({
-            ...prev,
-            [selectedUnit.id]: result,
-          }));
-          showToast(`[${selectedUnit.name}] 평면도 사진이 정상 등록되었습니다.`);
-        } else {
-          setFloorPlans((prev) => ({
-            ...prev,
-            [selectedFloor.floorId]: result,
-          }));
-          showToast(`[${selectedFloor.name}] 평면도 사진이 정상 등록되었습니다.`);
-        }
-        setIsEditModalOpen(false);
-      }
-    };
-    reader.readAsDataURL(file);
+    let result: string;
+    try {
+      result = await compressImageFile(file);
+    } catch {
+      alert('사진을 처리하지 못했습니다. 다른 사진으로 다시 시도해 주세요.');
+      return;
+    }
+
+    const size = formatSize(estimateBytes(result));
+
+    if (activeTab === 'units') {
+      setUnitPlans((prev) => ({
+        ...prev,
+        [selectedUnit.id]: result,
+      }));
+      showToast(`[${selectedUnit.name}] 평면도 사진이 등록되었습니다. (${size})`);
+    } else {
+      setFloorPlans((prev) => ({
+        ...prev,
+        [selectedFloor.floorId]: result,
+      }));
+      showToast(`[${selectedFloor.name}] 평면도 사진이 등록되었습니다. (${size})`);
+    }
+    setIsEditModalOpen(false);
   };
 
   // Drag and drop

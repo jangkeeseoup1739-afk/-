@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { MapPin, Train, Navigation, Truck, Building2, CheckCircle2, Clock, Footprints, ZoomIn, Maximize2, X, Sparkles, Upload, Image as ImageIcon } from 'lucide-react';
 import { LOCATION_POINTS, PROJECT_INFO } from '../data/projectData';
+import { compressImageFile, trySaveToStorage } from '../lib/imageStore';
+
 const stationRouteImg = '/images/station_route_map_1789266592273.webp';
 
 const STORAGE_KEY_STATION_IMAGE = 'joneflex_station_route_custom_image';
@@ -19,21 +21,24 @@ export const LocationSection: React.FC = () => {
   const [isZoomOpen, setIsZoomOpen] = useState(false);
 
   // Allow uploading replacement image if desired
-  const handleImageChange = (file: File) => {
+  const handleImageChange = async (file: File) => {
     if (!file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const res = e.target?.result as string;
-      if (res) {
-        setStationImage(res);
-        try {
-          localStorage.setItem(STORAGE_KEY_STATION_IMAGE, res);
-        } catch (err) {
-          console.warn('Could not save station image:', err);
-        }
-      }
-    };
-    reader.readAsDataURL(file);
+
+    let res: string;
+    try {
+      res = await compressImageFile(file);
+    } catch {
+      alert('사진을 처리하지 못했습니다. 다른 사진으로 다시 시도해 주세요.');
+      return;
+    }
+
+    setStationImage(res);
+
+    if (!trySaveToStorage(STORAGE_KEY_STATION_IMAGE, res)) {
+      alert(
+        '사진은 화면에 표시되지만 저장 공간이 부족해 기억되지 않습니다. 페이지를 새로고침하면 원래 약도로 돌아갑니다.'
+      );
+    }
   };
 
   return (
