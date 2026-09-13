@@ -4,7 +4,7 @@ import { LOCATION_POINTS, PROJECT_INFO } from '../data/projectData';
 import { compressImageFile, trySaveToStorage } from '../lib/imageStore';
 import { isAdminMode } from '../lib/adminMode';
 
-const stationRouteImg = '/images/station_route_map_1789266592273.webp';
+const stationRouteImg = '/images/station-route-map.webp';
 
 const STORAGE_KEY_STATION_IMAGE = 'joneflex_station_route_custom_image';
 
@@ -89,7 +89,7 @@ export const LocationSection: React.FC = () => {
                   src={stationImage}
                   alt="주안국가산단역 2번 출구에서 제이원플렉스까지 이동 동선 (100m)" 
                   referrerPolicy="no-referrer"
-                  className="w-full h-auto object-cover max-h-[220px] transition-transform duration-300 group-hover:scale-[1.02]"
+                  className="w-full h-auto object-contain max-h-[240px] transition-transform duration-300 group-hover:scale-[1.02]"
                 />
 
                 {/* Floating overlay on hover */}
