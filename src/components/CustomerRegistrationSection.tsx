@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { UserCheck, Phone, Send, CheckCircle2, ShieldCheck, AlertCircle, Sparkles, MessageSquare, Clock, ArrowRight } from 'lucide-react';
 import { PROJECT_INFO, UNIT_TYPES } from '../data/projectData';
 import { CustomerLead } from '../types';
+import { sendLead, LeadDeliveryStatus } from '../lib/sendLead';
 
 interface CustomerRegistrationSectionProps {
   prefilledType?: string;
@@ -24,6 +25,9 @@ export const CustomerRegistrationSection: React.FC<CustomerRegistrationSectionPr
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedLead, setSubmittedLead] = useState<CustomerLead | null>(null);
+  const [delivery, setDelivery] = useState<LeadDeliveryStatus>('disabled');
+  // 사람에게는 보이지 않는 칸. 자동 등록 프로그램만 여기를 채웁니다.
+  const [honeypot, setHoneypot] = useState('');
 
   // Update when prefilled props change
   useEffect(() => {
@@ -50,7 +54,7 @@ export const CustomerRegistrationSection: React.FC<CustomerRegistrationSectionPr
     setPhone(formatted);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
       alert('성함을 입력해 주세요.');
@@ -79,6 +83,13 @@ export const CustomerRegistrationSection: React.FC<CustomerRegistrationSectionPr
       privacyAgreed: true,
     };
 
+    // 숨김 칸이 채워졌으면 자동 등록 프로그램입니다. 전송하지 않고 완료 화면만 보여줍니다.
+    if (honeypot.trim()) {
+      setIsSubmitting(false);
+      setSubmittedLead(newLead);
+      return;
+    }
+
     // Save to localStorage
     try {
       const existing = localStorage.getItem('joneflex_leads');
@@ -89,14 +100,15 @@ export const CustomerRegistrationSection: React.FC<CustomerRegistrationSectionPr
       console.error('Failed to store lead:', err);
     }
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmittedLead(newLead);
-      // reset fields
-      setName('');
-      setPhone('');
-      setMessage('');
-    }, 600);
+    const status = await sendLead(newLead);
+
+    setDelivery(status);
+    setIsSubmitting(false);
+    setSubmittedLead(newLead);
+    // reset fields
+    setName('');
+    setPhone('');
+    setMessage('');
   };
 
   return (
@@ -172,6 +184,15 @@ export const CustomerRegistrationSection: React.FC<CustomerRegistrationSectionPr
                 남겨주신 번호로 담당 전문 상담사가 신속하고 친절하게 파격 프로모션 혜택 및 호실 정보를 상담 도와드리겠습니다.
               </p>
 
+              {delivery === 'failed' && (
+                <div className="max-w-md mx-auto flex items-start gap-2 text-left bg-amber-50 border border-amber-300 rounded-xl p-3">
+                  <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <p className="text-xs text-amber-900 leading-relaxed">
+                    현재 접속 환경에서 자동 접수 전송이 지연되고 있습니다. 빠른 상담을 원하시면 아래 전화 버튼을 눌러 바로 연락 주세요.
+                  </p>
+                </div>
+              )}
+
               <div className="bg-white p-4 rounded-xl border border-slate-200 max-w-md mx-auto text-xs text-left space-y-1.5 text-slate-700">
                 <div className="flex justify-between">
                   <span className="text-slate-500">신청 성함:</span>
@@ -213,7 +234,20 @@ export const CustomerRegistrationSection: React.FC<CustomerRegistrationSectionPr
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6" id="lead-form">
-              
+
+              {/* 스팸 방지용 숨김 칸. 실제 고객에게는 보이지 않습니다. */}
+              <input
+                id="lead-company-fax"
+                name="company_fax"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                className="absolute w-px h-px -left-[9999px] opacity-0 pointer-events-none"
+              />
+
               {/* Form Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 
