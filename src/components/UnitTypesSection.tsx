@@ -1112,7 +1112,7 @@ export const UnitTypesSection: React.FC<UnitTypesSectionProps> = ({ onSelectUnit
                       type="text"
                       value={inputUrl}
                       onChange={(e) => setInputUrl(e.target.value)}
-                      placeholder="/src/assets/images/... 또는 https://..."
+                      placeholder="/images/... 또는 https://..."
                       className="w-full bg-slate-950 border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
                     />
                   </div>

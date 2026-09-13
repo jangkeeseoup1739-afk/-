@@ -165,8 +165,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onRegisterClick, onExp
                   key={heroTab}
                   src={
                     heroTab === 'dormitory'
-                      ? '/src/assets/images/regenerated_image_1789113832511.png'
-                      : '/src/assets/images/regenerated_image_1789113730277.png'
+                      ? '/images/regenerated_image_1789113832511.png'
+                      : '/images/regenerated_image_1789113730277.png'
                   }
                   alt={
                     heroTab === 'dormitory'

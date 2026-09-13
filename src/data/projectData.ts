@@ -36,7 +36,7 @@ export const FLOOR_GUIDES: FloorInfo[] = [
       '풀퍼니시드 빌트인 가전 & 냉난방 시스템 완비'
     ],
     description: '10층 최고층에 위치하여 뛰어난 채광과 조망권을 자랑하며, 일부세대 복층 설계와 약 4평 테라스를 통해 최고급 주거 힐링 공간을 제공합니다.',
-    image: '/src/assets/images/regenerated_image_1789119972687.png',
+    image: '/images/regenerated_image_1789119972687.png',
   },
   {
     floorId: '8-9F',
@@ -52,7 +52,7 @@ export const FLOOR_GUIDES: FloorInfo[] = [
       '지식산업센터 업무 공간과 분리된 독립된 쾌적 주거 동선'
     ],
     description: '입주 기업 임직원의 쾌적한 웰빙 라이프를 위해 전 세대 약 4평의 넓은 테라스를 기본 제공하여 휴식과 여유를 더했습니다.',
-    image: '/src/assets/images/real_floor_8_terrace.jpg',
+    image: '/images/real_floor_8_terrace.jpg',
   },
   {
     floorId: '5-7F',
@@ -69,7 +69,7 @@ export const FLOOR_GUIDES: FloorInfo[] = [
       '발코니 서비스 면적 제공으로 쾌적한 오피스 환경 구축'
     ],
     description: '최대 3.9m 높은 층고 설계로 공간 개방감을 극대화하였으며, 기업 규모에 맞춰 유연하게 확장·통합할 수 있는 스마트 모듈형 섹션오피스입니다.',
-    image: '/src/assets/images/real_floor_5_office.jpg',
+    image: '/images/real_floor_5_office.jpg',
   },
   {
     floorId: '1-4F',
@@ -86,7 +86,7 @@ export const FLOOR_GUIDES: FloorInfo[] = [
       '최대 4.2m 층고로 호이스트 설치 및 복층형 사무공간 활용 가능'
     ],
     description: '지상 1층 곡선 드라이브인 램프를 통해 지상 4층까지 대형 화물 차량이 직접 진입하며, 1층 근린생활시설과 결합되어 최상의 물류 및 업무 편의성을 제공합니다.',
-    image: '/src/assets/images/regenerated_image_1789120455292.png',
+    image: '/images/regenerated_image_1789120455292.png',
   },
   {
     floorId: 'B2-B1',
@@ -103,7 +103,7 @@ export const FLOOR_GUIDES: FloorInfo[] = [
       '쾌적한 환기 및 방재 시스템 완비'
     ],
     description: '지하 2층부터 시작되는 직통 램프 드라이브인을 통해 하역 작업과 주차를 한 번에 해결하는 스마트 물류 환경을 조성했습니다.',
-    image: '/src/assets/images/real_floor_1_4_drivein.jpg',
+    image: '/images/real_floor_1_4_drivein.jpg',
   },
 ];
 
