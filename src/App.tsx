@@ -11,6 +11,7 @@ import { CustomerRegistrationSection } from './components/CustomerRegistrationSe
 import { Footer } from './components/Footer';
 import { QuickFloatingBar } from './components/QuickFloatingBar';
 import { RegisteredLeadsModal } from './components/RegisteredLeadsModal';
+import { PrivacyPolicyPage } from './components/PrivacyPolicyPage';
 import { UnitType } from './types';
 
 export default function App() {
@@ -49,6 +50,13 @@ export default function App() {
     setPrefilledNote(note);
     scrollToRegistration();
   };
+
+  // /privacy 는 개인정보처리방침 전용 페이지로 보여줍니다.
+  // vercel.json 의 SPA 리라이트 덕분에 주소를 직접 입력해도 열립니다.
+  const path = typeof window !== 'undefined' ? window.location.pathname.replace(/\/+$/, '') : '';
+  if (path === '/privacy') {
+    return <PrivacyPolicyPage />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans selection:bg-amber-400 selection:text-slate-950">
