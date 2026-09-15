@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://homefixweb.com/sitemap.xml
+Sitemap: https://joneflex.homefixweb.com/sitemap.xml
