@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://homepage-xwqg.vercel.app/sitemap.xml
+Sitemap: https://homefixweb.com/sitemap.xml
