@@ -78,6 +78,33 @@ export const Footer: React.FC = () => {
 
         </div>
 
+        {/* Blog / News */}
+        <div className="pb-10 border-b border-slate-800/80 space-y-3">
+          <h4 className="text-white font-bold text-xs uppercase tracking-wider">
+            분양 소식 · 블로그
+          </h4>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <a
+              href="https://blog.naver.com/ks506l/224405003520"
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-1.5 text-slate-300 font-semibold hover:text-amber-400 transition-colors"
+            >
+              주안국가산단역 제이원플렉스 최신 분양 소식
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </a>
+            <a
+              href="https://blog.naver.com/ks506l"
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-1.5 text-slate-400 hover:text-amber-400 transition-colors"
+            >
+              분양 상담 블로그 전체 글 보기
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </a>
+          </div>
+        </div>
+
         {/* Legal Disclaimer */}
         <div className="text-[11px] text-slate-500 leading-relaxed space-y-2">
           <p className="flex items-start gap-1.5">
